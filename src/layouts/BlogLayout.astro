@@ -58,17 +58,11 @@ const fullUrl = new URL(Astro.url.pathname, Astro.site).toString();
 >
   <Header
     slot="header"
-    position="fixed"
-    size="lg"
-    showActiveState
-    showCta
-    cta={{ label: 'View Docs', href: 'https://docs.deployvelocity.com' }}
-    extraNav={[{ label: 'Features', href: '#features' }]}
     actions={[
       {
         icon: 'github',
-        href: 'https://github.com/southwellmedia/velocity',
-        label: 'View on GitHub',
+        href: 'https://github.com/NanoFleet/nanofleet',
+        label: 'GitHub',
         iconOnly: true,
         target: '_blank',
       },
