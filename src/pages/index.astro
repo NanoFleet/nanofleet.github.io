@@ -1,0 +1,431 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/layout/Header.astro';
+import Footer from '@/components/layout/Footer.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
+---
+
+<BaseLayout
+  title="NanoFleet — Self-hosted AI fleet manager"
+  description="Deploy AI agents in isolated Docker containers, interact with them via a web dashboard, and extend them with plugins."
+  includeOrgSchema={true}
+>
+  <Header
+    slot="header"
+    position="sticky"
+    variant="default"
+    actions={[
+      {
+        icon: 'github',
+        href: 'https://github.com/NanoFleet/nanofleet',
+        label: 'GitHub',
+        iconOnly: true,
+        target: '_blank',
+      },
+    ]}
+  />
+
+  <main>
+
+    <!-- =====================================================================
+         HERO
+         ===================================================================== -->
+    <section class="relative overflow-hidden border-b border-border">
+      <!-- Graph-paper grid background -->
+      <div class="absolute inset-0 bg-grid-pattern opacity-40 pointer-events-none"></div>
+      <div class="relative container mx-auto px-6 py-24 md:py-36 text-center">
+
+        <!-- Badge -->
+        <div class="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground-muted mb-8">
+          <span class="h-1.5 w-1.5 rounded-full bg-success"></span>
+          Open source · Self-hosted
+        </div>
+
+        <!-- Headline -->
+        <h1 class="mx-auto max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl md:text-6xl leading-tight">
+          A fleet manager<br/>for your AI agents
+        </h1>
+
+        <p class="mx-auto mt-6 max-w-xl text-base text-foreground-muted md:text-lg">
+          Deploy agents in isolated Docker containers, interact with them via a web dashboard, and extend them with plugins. Fully self-hosted.
+        </p>
+
+        <!-- CTAs -->
+        <div class="mt-10 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <a
+            href="https://github.com/NanoFleet/nanofleet"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background transition-opacity hover:opacity-80"
+          >
+            <Icon name="github" size="sm" />
+            View on GitHub
+          </a>
+          <a
+            href="#how-it-works"
+            class="inline-flex items-center gap-2 rounded-md border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+          >
+            How it works
+            <Icon name="chevron-down" size="sm" />
+          </a>
+        </div>
+
+        <!-- Dashboard screenshot mockup -->
+        <div class="mt-16 mx-auto max-w-5xl">
+          <div class="rounded-lg border border-border bg-card shadow-xl overflow-hidden">
+            <!-- Fake browser chrome -->
+            <div class="flex items-center gap-1.5 border-b border-border px-4 py-3 bg-background-secondary">
+              <span class="h-2.5 w-2.5 rounded-full bg-border-strong"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-border-strong"></span>
+              <span class="h-2.5 w-2.5 rounded-full bg-border-strong"></span>
+              <span class="ml-4 text-xs text-foreground-muted font-mono">localhost:8080</span>
+            </div>
+            <!-- Dashboard mockup -->
+            <div class="flex h-72 bg-background">
+              <!-- Sidebar -->
+              <div class="w-48 border-r border-border bg-background-secondary flex flex-col p-3 gap-1 shrink-0">
+                <div class="flex items-center gap-2 px-2 py-1.5 mb-2">
+                  <div class="h-4 w-4 rounded-sm bg-foreground"></div>
+                  <span class="text-xs font-semibold text-foreground">NanoFleet</span>
+                </div>
+                {[
+                  { label: 'Fleet Dashboard', active: true, icon: 'layout-grid' },
+                  { label: 'Agents', active: false, icon: 'bot' },
+                  { label: 'Plugins', active: false, icon: 'plug' },
+                ].map(item => (
+                  <div class={`flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium ${item.active ? 'bg-background text-foreground font-semibold' : 'text-foreground-muted'}`}>
+                    <Icon name={item.icon} size="sm" />
+                    {item.label}
+                  </div>
+                ))}
+                <div class="mt-2 px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-foreground-muted">Plugins</div>
+                {[
+                  { label: 'Vault', icon: 'key-round' },
+                  { label: 'Tasks', icon: 'square-check-big' },
+                ].map(item => (
+                  <div class="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-foreground-muted">
+                    <Icon name={item.icon} size="sm" />
+                    {item.label}
+                  </div>
+                ))}
+              </div>
+              <!-- Main area with grid pattern -->
+              <div class="flex-1 p-5 bg-grid-pattern overflow-hidden">
+                <div class="flex items-center justify-between mb-4">
+                  <h2 class="text-sm font-semibold text-foreground">Fleet Dashboard</h2>
+                  <div class="flex items-center gap-1.5 rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background">
+                    <Icon name="plus" size="sm" />
+                    Deploy New Agent
+                  </div>
+                </div>
+                <!-- Agent card -->
+                <div class="w-72 rounded-md border border-border bg-card p-4">
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-bold text-foreground">John</span>
+                    <div class="flex items-center gap-2">
+                      <Icon name="pause" size="sm" class="text-foreground-muted" />
+                      <Icon name="trash" size="sm" class="text-error" />
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <span class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium border border-success/30 text-success" style="background-color: color-mix(in oklch, var(--success) 15%, transparent);">
+                      Running
+                    </span>
+                  </div>
+                  <div class="flex items-center gap-2 mb-3">
+                    <div class="inline-flex items-center gap-1.5 rounded-full border border-border bg-background-secondary px-2.5 py-0.5 text-xs text-foreground-muted">
+                      <Icon name="tag" size="sm" />
+                      developer
+                    </div>
+                    <button class="flex h-5 w-5 items-center justify-center rounded-full border border-border text-foreground-muted">
+                      <Icon name="plus" size="sm" />
+                    </button>
+                  </div>
+                  <div class="flex items-center gap-1 text-xs text-foreground-muted">
+                    View workspace <Icon name="arrow-right" size="sm" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         FEATURES
+         ===================================================================== -->
+    <section class="border-b border-border py-20 md:py-28">
+      <div class="container mx-auto px-6">
+        <div class="mx-auto max-w-xl text-center mb-14">
+          <h2 class="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Everything you need to run AI agents
+          </h2>
+          <p class="mt-3 text-sm text-foreground-muted md:text-base">
+            Built for engineers who want full control over their AI infrastructure.
+          </p>
+        </div>
+
+        <div class="grid gap-px border border-border rounded-lg overflow-hidden bg-border md:grid-cols-3">
+          {[
+            {
+              icon: 'box',
+              title: 'Docker isolation',
+              description: 'Every agent runs in its own container. Strict resource limits, network isolation, and clean restarts by default.',
+            },
+            {
+              icon: 'zap',
+              title: 'Plugin system',
+              description: 'Extend agents with MCP tools via independent Docker containers. Install by pointing at a manifest URL.',
+            },
+            {
+              icon: 'archive',
+              title: 'Agent Packs',
+              description: "Portable zip files that define an agent's persona, tools, and skills. Share, version, and deploy in seconds.",
+            },
+          ].map(feat => (
+            <div class="bg-card p-8 flex flex-col gap-4">
+              <div class="flex h-9 w-9 items-center justify-center rounded-md border border-border bg-background text-foreground">
+                <Icon name={feat.icon} size="sm" />
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-foreground">{feat.title}</h3>
+                <p class="mt-1.5 text-sm text-foreground-muted leading-relaxed">{feat.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         HOW IT WORKS
+         ===================================================================== -->
+    <section id="how-it-works" class="border-b border-border py-20 md:py-28 bg-background-secondary">
+      <div class="container mx-auto px-6">
+        <div class="mx-auto max-w-xl text-center mb-14">
+          <h2 class="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Up and running in minutes
+          </h2>
+          <p class="mt-3 text-sm text-foreground-muted md:text-base">
+            Three steps from zero to a live agent fleet.
+          </p>
+        </div>
+
+        <div class="mx-auto max-w-3xl space-y-3">
+          {[
+            {
+              step: '01',
+              title: 'Configure',
+              description: 'Copy the example env file and set your encryption key, access token secret, and refresh token secret.',
+              code: 'cp apps/api/.env.example apps/api/.env',
+            },
+            {
+              step: '02',
+              title: 'Deploy',
+              description: 'Run Docker Compose. On first boot, NanoFleet prints a temporary password and a QR code in the terminal — scan it to set up 2FA.',
+              code: 'docker compose up --build',
+            },
+            {
+              step: '03',
+              title: 'Deploy your first agent',
+              description: 'Open the dashboard, create an agent, and write its SOUL.md and TOOLS.md directly from the UI. Enable plugins as needed.',
+              code: '# http://localhost:8080',
+            },
+          ].map(item => (
+            <div class="flex gap-6 rounded-lg border border-border bg-card p-6">
+              <div class="shrink-0 pt-0.5">
+                <span class="font-mono text-xs font-semibold text-foreground-muted">{item.step}</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="text-sm font-semibold text-foreground mb-1">{item.title}</h3>
+                <p class="text-sm text-foreground-muted mb-3">{item.description}</p>
+                <div class="rounded border border-dashed border-border bg-background-secondary px-3 py-2">
+                  <code class="font-mono text-xs text-foreground-muted">{item.code}</code>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         AGENT PACKS
+         ===================================================================== -->
+    <section class="border-b border-border py-20 md:py-28">
+      <div class="container mx-auto px-6">
+        <div class="mx-auto max-w-4xl grid md:grid-cols-2 gap-12 items-center">
+          <!-- Text -->
+          <div>
+            <div class="inline-flex items-center gap-1.5 rounded-full border border-border bg-background-secondary px-3 py-1 text-xs font-medium text-foreground-muted mb-6">
+              <Icon name="archive" size="sm" />
+              Agent Packs
+            </div>
+            <h2 class="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl mb-4">
+              Portable agents,<br/>ready to deploy
+            </h2>
+            <p class="text-sm text-foreground-muted leading-relaxed mb-6">
+              An Agent Pack is a zip file you import from the dashboard. NanoFleet mounts it into the agent's container — persona, tools, and skills included.
+            </p>
+            <ul class="space-y-2.5 text-sm text-foreground-muted">
+              {[
+                { icon: 'file-text', label: 'manifest.json — name, model, required API keys' },
+                { icon: 'file-text', label: 'SOUL.md — persona, behavior rules, and constraints' },
+                { icon: 'settings', label: 'TOOLS.md — how the agent uses its MCP tools' },
+                { icon: 'layers', label: '/skills — optional custom files' },
+              ].map(item => (
+                <li class="flex items-start gap-2.5">
+                  <Icon name={item.icon} size="sm" class="mt-0.5 shrink-0 text-foreground" />
+                  <span>{item.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <!-- Pack file tree mockup -->
+          <div class="rounded-lg border border-border bg-card overflow-hidden">
+            <div class="border-b border-border bg-background-secondary px-4 py-2.5 flex items-center gap-2">
+              <Icon name="archive" size="sm" class="text-foreground-muted" />
+              <span class="text-xs font-mono font-medium text-foreground-muted">my-agent.zip</span>
+            </div>
+            <div class="p-4 font-mono text-xs text-foreground-muted space-y-1.5">
+              <div class="flex items-center gap-2">
+                <Icon name="file-text" size="sm" />
+                <span class="text-foreground">manifest.json</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <Icon name="file-text" size="sm" />
+                <span class="text-foreground">SOUL.md</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <Icon name="settings" size="sm" />
+                <span class="text-foreground">TOOLS.md</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <Icon name="layers" size="sm" />
+                <span class="text-foreground">skills/</span>
+              </div>
+              <div class="flex items-center gap-2 pl-5">
+                <Icon name="code" size="sm" />
+                <span>search_web.py</span>
+              </div>
+              <div class="flex items-center gap-2 pl-5">
+                <Icon name="code" size="sm" />
+                <span>summarize.py</span>
+              </div>
+            </div>
+            <div class="border-t border-dashed border-border bg-background-secondary px-4 py-3">
+              <code class="font-mono text-xs text-foreground-muted"># Import from the dashboard → Deploy Agent</code>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         PLUGINS
+         ===================================================================== -->
+    <section class="border-b border-border py-20 md:py-28 bg-background-secondary">
+      <div class="container mx-auto px-6">
+        <div class="mx-auto max-w-xl text-center mb-14">
+          <h2 class="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
+            Extend with plugins
+          </h2>
+          <p class="mt-3 text-sm text-foreground-muted md:text-base">
+            Plugins are independent Docker containers exposing an MCP server. Install by pointing NanoFleet at a manifest URL.
+          </p>
+        </div>
+
+        <div class="mx-auto max-w-3xl grid gap-3 sm:grid-cols-3">
+          {[
+            {
+              icon: 'inbox',
+              name: 'nanofleet-chat',
+              description: 'Multi-agent chat channels for real-time collaboration.',
+              href: 'https://github.com/NanoFleet/nanofleet-chat',
+            },
+            {
+              icon: 'check-circle',
+              name: 'nanofleet-tasks',
+              description: 'Kanban task manager for human-agent collaboration.',
+              href: 'https://github.com/NanoFleet/nanofleet-tasks',
+            },
+            {
+              icon: 'shield',
+              name: 'nanofleet-vault',
+              description: 'Secret manager with per-agent access control.',
+              href: 'https://github.com/NanoFleet/nanofleet-vault',
+            },
+          ].map(plugin => (
+            <a
+              href={plugin.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group rounded-lg border border-border bg-card p-5 flex flex-col gap-3 transition-colors hover:border-border-strong"
+            >
+              <div class="flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-foreground">
+                <Icon name={plugin.icon} size="sm" />
+              </div>
+              <div>
+                <h3 class="text-xs font-semibold text-foreground font-mono">{plugin.name}</h3>
+                <p class="mt-1 text-xs text-foreground-muted leading-relaxed">{plugin.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         CTA
+         ===================================================================== -->
+    <section class="py-20 md:py-28" style="background: oklch(18% 0 0);">
+      <div class="container mx-auto px-6 text-center">
+        <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl mb-4" style="color: oklch(98.1% 0.004 95);">
+          Ready to deploy your fleet?
+        </h2>
+        <p class="mx-auto max-w-md text-sm mb-8" style="color: oklch(70% 0 0);">
+          NanoFleet is open source and self-hosted. Your agents, your infrastructure.
+        </p>
+        <div class="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <a
+            href="https://github.com/NanoFleet/nanofleet"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-80"
+            style="background: oklch(98.1% 0.004 95); color: oklch(18% 0 0);"
+          >
+            <Icon name="github" size="sm" />
+            Star on GitHub
+          </a>
+          <a
+            href="/blog"
+            class="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-80"
+            style="border: 1px solid oklch(35% 0 0); color: oklch(98.1% 0.004 95);"
+          >
+            Read the blog
+            <Icon name="arrow-right" size="sm" />
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <Footer
+    slot="footer"
+    layout="simple"
+    nav={[
+      { label: 'Blog', href: '/blog' },
+      { label: 'GitHub', href: 'https://github.com/NanoFleet/nanofleet', external: true },
+    ]}
+    showSocial={false}
+    copyright="© {year} NanoFleet. Open source."
+  >
+    <a slot="logo" href="/" class="flex items-center gap-2">
+      <span class="text-sm font-semibold text-foreground">NanoFleet</span>
+    </a>
+  </Footer>
+
+</BaseLayout>
