@@ -50,14 +50,13 @@ export interface SiteConfig {
 
 const siteConfig: SiteConfig = {
   name: 'NanoFleet',
-  description: 'A self-hosted fleet manager for AI agents. Deploy agents in isolated Docker containers, interact with them via a web dashboard, and extend them with plugins.',
+  description:
+    'A self-hosted fleet manager for AI agents. Deploy agents in isolated Docker containers, interact with them via a web dashboard, and extend them with plugins.',
   url: SITE_URL || 'https://nanofleet.github.io',
-  ogImage: '/og-default.png',
+  ogImage: '/og-image.jpg',
   author: 'NanoFleet',
   email: 'hello@nanofleet.dev',
-  socialLinks: [
-    'https://github.com/NanoFleet',
-  ],
+  socialLinks: ['https://github.com/NanoFleet'],
   verification: {
     google: GOOGLE_SITE_VERIFICATION,
     bing: BING_SITE_VERIFICATION,
