@@ -3,6 +3,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
+import remarkGithubAlerts from 'remark-github-alerts';
 
 export default defineConfig({
   site: 'https://nanofleet.ovh',
@@ -42,6 +43,7 @@ export default defineConfig({
   },
 
   markdown: {
+    remarkPlugins: [remarkGithubAlerts],
     shikiConfig: {
       theme: 'github-dark',
       wrap: true,
