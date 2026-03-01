@@ -25,11 +25,10 @@ services:
       - "4111:4111"
 ```
 
-Create a `.env` file alongside it:
+Copy the example env file and fill in the required values:
 
 ```bash
-ANTHROPIC_API_KEY=sk-ant-...
-AGENT_MODEL=claude-sonnet-4-6
+cp .env.example .env
 ```
 
 Start with:
@@ -64,17 +63,6 @@ services:
     depends_on:
       - agent
 ```
-
-And add the Telegram variables to `.env`:
-
-```bash
-ANTHROPIC_API_KEY=sk-ant-...
-AGENT_MODEL=claude-sonnet-4-6
-TELEGRAM_BOT_TOKEN=123456:ABC-...
-ALLOWED_USERS=123456789        # optional — restrict access to these user IDs
-NOTIFICATION_USER_ID=123456789 # optional — receive proactive notifications
-```
-
 ## Upgrade
 
 ```bash
