@@ -17,12 +17,11 @@ Connect a NanoFleet agent to Telegram using a Telegram bot. Users interact with 
 
 ## Via NanoFleet UI
 
-In the dashboard, go to **Channels → Deploy Channel → Telegram** and fill in:
+On the Fleet Dashboard, click the **radio icon** on the agent card you want to connect. A dialog opens — fill in:
 
 | Field | Description |
 |---|---|
-| Agent | The agent to connect |
-| Bot Token | Your Telegram bot token |
+| Bot Token | Your Telegram bot token (required) |
 | Allowed Users | Optional comma-separated Telegram user IDs (restricts access) |
 | Notification User ID | Optional Telegram user ID for proactive notifications |
 
@@ -47,7 +46,7 @@ services:
     image: ghcr.io/nanofleet/nanofleet-channel-telegram:latest
     restart: unless-stopped
     environment:
-      AGENT_URL: http://agent:3000
+      AGENT_URL: http://agent:4111
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       ALLOWED_USERS: ${ALLOWED_USERS}
       NOTIFICATION_USER_ID: ${NOTIFICATION_USER_ID}
