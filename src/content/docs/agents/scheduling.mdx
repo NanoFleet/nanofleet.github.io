@@ -48,7 +48,7 @@ When implemented, cron jobs will be declared in `cron.json` in the workspace:
     "name": "morning-briefing",
     "cron": "0 9 * * 1-5",
     "timezone": "Europe/Paris",
-    "task": "Prepare a morning briefing with today's priorities from the task board and send it to the Telegram channel."
+    "message": "Prepare a morning briefing with today's priorities from the task board and send it to the Telegram channel."
   }
 ]
 ```
@@ -58,7 +58,7 @@ When implemented, cron jobs will be declared in `cron.json` in the workspace:
 | `name` | Yes | Unique job identifier |
 | `cron` | Yes | Cron expression (5 fields) |
 | `timezone` | No | IANA timezone (default: `UTC`) |
-| `task` | Yes | Instruction sent to the agent |
+| `message` | Yes | Instruction sent to the agent |
 
 ## Heartbeat vs cron
 
@@ -73,8 +73,8 @@ When implemented, cron jobs will be declared in `cron.json` in the workspace:
 When a scheduled task completes, the agent can push messages to connected channels without waiting for a user message.
 
 The flow:
-1. Agent completes a scheduled run
-2. Agent calls a channel tool to send a message
-3. Channel delivers it to the user (Telegram, Discord, etc.)
+1. Heartbeat run completes with actionable output
+2. Agent emits a notification via an internal SSE stream
+3. Connected channel picks it up and delivers it to the user (Telegram, Discord, etc.)
 
-If no channel is connected when the notification is triggered, it is silently dropped.
+If no channel is connected when the notification is emitted, it is silently dropped.
