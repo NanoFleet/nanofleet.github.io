@@ -247,6 +247,15 @@ import Icon from '@/components/ui/primitives/Icon/Icon.astro';
               </div>
             </div>
           ))}
+          <div class="flex justify-center pt-4">
+            <a
+              href="/docs"
+              class="inline-flex items-center gap-2 rounded-md border border-border bg-card px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:bg-secondary"
+            >
+              <Icon name="book" size="sm" />
+              Read the documentation
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -381,6 +390,14 @@ import Icon from '@/components/ui/primitives/Icon/Icon.astro';
             <Icon name="github" size="sm" />
             Star on GitHub
           </a>
+          <a
+            href="/docs"
+            class="inline-flex items-center gap-2 rounded-md px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-80"
+            style="border: 1px solid oklch(35% 0 0); color: oklch(98.1% 0.004 95);"
+          >
+            <Icon name="book" size="sm" />
+            Documentation
+          </a>
         </div>
       </div>
     </section>
@@ -391,6 +408,7 @@ import Icon from '@/components/ui/primitives/Icon/Icon.astro';
     slot="footer"
     layout="simple"
     nav={[
+      { label: 'Docs', href: '/docs' },
       { label: 'GitHub', href: 'https://github.com/NanoFleet/nanofleet', external: true },
     ]}
     showSocial={false}

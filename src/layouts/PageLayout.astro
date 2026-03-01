@@ -31,6 +31,7 @@ const { title, description, image, imageAlt, noindex, nofollow } = Astro.props;
 >
   <Header
     slot="header"
+    showThemeToggle={false}
     actions={[
       {
         icon: 'github',
@@ -50,7 +51,7 @@ const { title, description, image, imageAlt, noindex, nofollow } = Astro.props;
     slot="footer"
     layout="simple"
     nav={[
-      { label: 'Blog', href: '/blog' },
+      { label: 'Docs', href: '/docs' },
       { label: 'GitHub', href: 'https://github.com/NanoFleet/nanofleet', external: true },
     ]}
     showSocial={false}
