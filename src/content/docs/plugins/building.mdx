@@ -16,33 +16,30 @@ The manifest describes your plugin to NanoFleet:
 ```json
 {
   "name": "my-plugin",
+  "version": "1.0.0",
   "description": "What this plugin does",
   "image": "ghcr.io/your-org/my-plugin:latest",
   "mcpPort": 8080,
-  "envVars": [
-    {
-      "name": "MY_API_KEY",
-      "description": "API key for the external service",
-      "required": true
-    }
-  ]
+  "requiredEnvVars": ["MY_API_KEY"]
 }
 ```
 
-**With optional UI:**
+**With a sidebar UI:**
 
 ```json
 {
   "name": "my-plugin",
+  "version": "1.0.0",
   "description": "Plugin with a dashboard UI",
   "image": "ghcr.io/your-org/my-plugin:latest",
   "mcpPort": 8080,
-  "ui": {
+  "uiPort": 3001,
+  "sidebar": {
+    "icon": "LayoutDashboard",
     "label": "My Plugin",
-    "icon": "layout-dashboard",
-    "uiPort": 3001
+    "route": "/plugins/my-plugin/ui"
   },
-  "envVars": []
+  "requiredEnvVars": []
 }
 ```
 
@@ -51,13 +48,16 @@ The manifest describes your plugin to NanoFleet:
 | Field | Required | Description |
 |---|---|---|
 | `name` | Yes | Plugin identifier (lowercase, no spaces) |
-| `description` | Yes | Short description shown in the dashboard |
+| `version` | Yes | Semver version string (e.g. `1.0.0`) |
+| `description` | No | Short description shown in the dashboard |
+| `author` | No | Author name or organization |
 | `image` | Yes | Docker image to pull and run |
 | `mcpPort` | Yes | Port the MCP server listens on inside the container |
-| `ui.label` | No | Sidebar nav label |
-| `ui.icon` | No | Lucide icon name for the sidebar |
-| `ui.uiPort` | No | Port the UI server listens on inside the container |
-| `envVars` | No | Environment variables to request at install time |
+| `uiPort` | No | Port the web frontend listens on (required if `sidebar` is declared) |
+| `sidebar.icon` | No | Lucide icon name for the sidebar entry |
+| `sidebar.label` | No | Sidebar navigation label |
+| `sidebar.route` | No | Frontend route path (convention: `/plugins/{name}/ui`) |
+| `requiredEnvVars` | No | List of env var names that must exist in Settings → API Keys before install |
 
 ## Environment variables injected automatically
 
@@ -94,7 +94,19 @@ pip install mcp
 
 ## Tool call flow
 
-When an agent calls a plugin tool:
+Agents call plugin MCP servers **directly** — the NanoFleet API is not on the hot path. At install time, NanoFleet calls `tools/list` to register the plugin's tools, then injects the plugin URL into each agent's `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "my-plugin": {
+      "url": "http://nanofleet-plugin-my-plugin:8080/mcp?agent_id=abc123"
+    }
+  }
+}
+```
+
+The `agent_id` query parameter lets your plugin scope data per agent.
 
 ```
 Agent → POST /mcp (tools/call)
@@ -103,14 +115,12 @@ Agent → POST /mcp (tools/call)
               └─▶ Returns result to agent
 ```
 
-The `agent_id` is passed in the MCP request context so your plugin can scope data per agent.
-
 ## Plugin with UI
 
 If your plugin has a web UI (like a Kanban board or dashboard):
 
-1. Set `ui.uiPort` in the manifest
-2. Run your UI server on that port inside the container
+1. Set `uiPort` and `sidebar` in the manifest
+2. Run your UI server on `uiPort` inside the container
 3. NanoFleet proxies requests: `/api/plugins/:name/ui/*` → `http://container:uiPort/*`
 4. A `?nf_token=` query parameter is appended automatically for auth
 
