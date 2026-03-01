@@ -228,14 +228,17 @@ const currentPath = Astro.url.pathname.replace(/\/$/, '');
     color: var(--color-foreground-secondary);
   }
 
-  .docs-prose a {
+  .docs-prose a:not(.not-prose a) {
     color: var(--color-primary);
     text-decoration: underline;
     text-underline-offset: 3px;
     text-decoration-thickness: 1px;
   }
-  .docs-prose a:hover {
+  .docs-prose a:not(.not-prose a):hover {
     opacity: 0.8;
+  }
+  .docs-prose .not-prose a {
+    text-decoration: none;
   }
 
   .docs-prose ul,
