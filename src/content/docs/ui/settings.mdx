@@ -34,11 +34,9 @@ Under **API Keys**, add and delete secrets used by agents and plugins:
 - `GITHUB_TOKEN`
 - Any custom key your agents or plugins need
 
-### Auto-injection
+### Auto-resolution at deploy time
 
-When an agent pack lists keys in `requiredEnvVars`, NanoFleet automatically resolves them from the vault and injects them as environment variables at deploy time. You don't need to manually configure each agent.
-
-The same applies to plugins: if a plugin manifest lists `envVars`, those are resolved from the vault during installation.
+When an agent pack lists keys in `requiredEnvVars`, NanoFleet validates that each key exists here before deploying. If a key is missing, deployment fails with an error asking you to add it first.
 
 ### Security
 
