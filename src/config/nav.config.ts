@@ -11,9 +11,7 @@ export interface NavItem {
   order: number;
 }
 
-export const navItems: NavItem[] = [
-  { label: 'Blog', href: '/blog', order: 1 },
-];
+export const navItems: NavItem[] = [];
 
 /**
  * Get navigation items sorted by order
