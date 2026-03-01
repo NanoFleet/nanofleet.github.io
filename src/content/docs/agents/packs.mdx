@@ -103,14 +103,14 @@ Place each skill in its own subdirectory under `skills/`: `skills/skill-name/SKI
 
 NanoFleet assembles the agent's system prompt in a fixed order to maximize [prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching):
 
-1. `SOUL.md` (static identity — cached)
-2. `STYLE.md` (static style — cached)
-3. `AGENTS.md` (static multi-agent context — cached)
-4. Skills (static — cached)
-5. `MEMORY.md` (can change — not cached)
-6. Tool descriptions (dynamic)
+1. Core instructions (static — cached)
+2. `SOUL.md` (static identity — cached)
+3. `STYLE.md` (static style — cached)
+4. `MEMORY.md` (can change — not cached)
+5. Skills metadata (XML list of available skills — cached if unchanged)
+6. `AGENTS.md` (static multi-agent context — cached)
 
-Static sections go first so they hit the cache on every call.
+Static sections go first so they hit the cache on every call. Tool definitions are passed separately to the LLM framework and are not part of the system prompt text.
 
 ## Uploading from the dashboard
 
