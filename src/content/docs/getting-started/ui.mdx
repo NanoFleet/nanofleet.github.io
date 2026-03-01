@@ -62,37 +62,32 @@ After login, you land on the Fleet Dashboard where you can:
 - Configure channels (Telegram, Discord, webhook)
 - Monitor live logs and token usage
 
-## Production with HTTPS
+## Deployment options
 
-Running NanoFleet on a remote server requires HTTPS — browsers block certain features over plain HTTP, and exposing port 8080 without TLS is not recommended.
+### Option 1 — Local (default)
 
-Two common approaches:
+By default, NanoFleet is accessible at `http://localhost:8080`. No additional configuration needed.
 
-### Option 1 — Domain + reverse proxy (Traefik)
+### Option 2 — Domain + HTTPS (Traefik)
 
-NanoFleet ships with a Traefik configuration that handles TLS automatically via Let's Encrypt.
+NanoFleet's `docker-compose.yml` includes Traefik under a `prod` profile that handles TLS automatically via Let's Encrypt.
 
-```bash
-cp docker-compose.prod.yml docker-compose.override.yml
-```
-
-Edit `docker-compose.override.yml` and set your domain:
-
-```yaml
-environment:
-  - DOMAIN=yourdomain.com
-  - ACME_EMAIL=you@example.com
-```
-
-Point your DNS A record to the server's public IP, then restart:
+Set your domain and email in `.env`:
 
 ```bash
-docker compose up -d
+DOMAIN=yourdomain.com
+ACME_EMAIL=you@example.com
 ```
 
-Traefik obtains a certificate automatically on first startup.
+Then start with the `prod` profile:
 
-### Option 2 — SSH tunnel (no domain needed)
+```bash
+docker compose --profile prod up -d
+```
+
+Point your DNS A record to the server's public IP. Traefik will obtain a certificate automatically on first startup and NanoFleet will be available at `https://yourdomain.com`.
+
+### Option 3 — SSH tunnel (remote server, no domain)
 
 If you're running NanoFleet on a remote server and don't want to expose it publicly, forward the port over SSH from your local machine:
 
