@@ -1,0 +1,56 @@
+---
+title: Overview
+description: NanoFleet UI layout — Fleet Dashboard, sidebar, and agent cards.
+order: 1
+section: NanoFleet UI
+---
+
+# NanoFleet UI — Overview
+
+The NanoFleet dashboard is available at `http://localhost:8080` after running `docker compose up`.
+
+## Layout
+
+```
+┌─────────────────────────────────────────────┐
+│  Header (logo + nav actions)                │
+├──────────────┬──────────────────────────────┤
+│              │                              │
+│  Left        │   Main workspace area        │
+│  Sidebar     │   (grid pattern background)  │
+│              │                              │
+│  - Fleet     │                              │
+│  - Plugins   │                              │
+│  - Channels  │                              │
+│  - Settings  │                              │
+│  [+ plugins] │                              │
+│              │                              │
+└──────────────┴──────────────────────────────┘
+```
+
+The left sidebar is persistent — it stays visible as you navigate. Installed plugins can inject their own nav entries below the core sections.
+
+## Fleet Dashboard
+
+The main view at `/` shows all deployed agents as cards. Each card displays:
+
+- Agent name and current status (`running`, `stopped`, `error`)
+- Model being used
+- Token usage and estimated cost (USD)
+- Live log tail (last few lines from stdout/stderr)
+- Quick actions: **Start / Stop / Delete**
+
+Click a card to open the full agent workspace.
+
+## Plugin sidebar slots
+
+When a plugin with a UI is installed (like nanofleet-tasks), it injects:
+
+- A nav entry in the left sidebar (with a label and icon)
+- A full-page iframe view in the main area
+
+This lets plugins present their own dashboards without leaving NanoFleet.
+
+## Deploy New Agent
+
+The **Deploy New Agent** button in the sidebar opens a modal to upload an agent pack (zip) or select a previously uploaded pack. After configuring the name and model, click **Deploy** — the agent starts within seconds.

@@ -1,0 +1,57 @@
+---
+title: nanofleet-vault
+description: Secret manager plugin — store and inject secrets into agents securely.
+order: 5
+section: Plugins
+---
+
+# nanofleet-vault
+
+A secret manager for NanoFleet agents. Store API keys and credentials in the vault and agents retrieve them at runtime via MCP — secrets never appear in agent prompts or logs.
+
+## Install
+
+In the NanoFleet dashboard, go to **Plugins → Install Plugin** and enter:
+
+```
+https://raw.githubusercontent.com/NanoFleet/nanofleet-vault/main/manifest.json
+```
+
+A `VAULT_ENCRYPTION_KEY` is automatically generated at install time. Secrets are stored encrypted at rest.
+
+## Managing secrets
+
+After installing, go to **Settings → API Keys** in the dashboard to add, view, and delete secrets.
+
+Secrets are scoped per agent — you control which agents can access which secrets.
+
+## MCP tool
+
+### `get_secret`
+
+Retrieves a secret by name.
+
+```
+get_secret(name: string) → { name: string, value: string }
+```
+
+**Example agent usage:**
+
+```
+I need to call the GitHub API. Let me retrieve the token first.
+→ get_secret("GITHUB_TOKEN")
+→ { name: "GITHUB_TOKEN", value: "ghp_..." }
+Now I'll use this token to authenticate.
+```
+
+## Critical rules for agents
+
+Agents using nanofleet-vault must follow these rules:
+
+1. **Never log or display secret values** — do not echo the value in responses or tool calls.
+2. **Only call `get_secret` when the secret is needed** — do not pre-fetch secrets speculatively.
+3. **Use secrets immediately** — do not store them in MEMORY.md or any file.
+
+## Auto-injection at deploy time
+
+Secrets listed in an agent pack's `requiredEnvVars` are automatically resolved from the vault and injected as environment variables when the agent is deployed — no manual configuration needed.

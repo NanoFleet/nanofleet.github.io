@@ -1,0 +1,86 @@
+---
+title: Scheduling
+description: Run periodic tasks with heartbeat intervals and cron jobs.
+order: 3
+section: Agents
+---
+
+# Scheduling
+
+NanoFleet agents support two types of scheduled execution: **heartbeat** (periodic check-in) and **cron jobs** (time-based tasks).
+
+## Heartbeat
+
+The heartbeat is a periodic self-check. If `HEARTBEAT.md` exists in the workspace and is non-empty, the agent runs through it at the configured interval.
+
+### HEARTBEAT.md
+
+Write a checklist of periodic tasks for the agent to review:
+
+```markdown
+- Check for new GitHub issues assigned to me
+- Review open pull requests and leave comments if needed
+- Update MEMORY.md with any new context
+- Post a summary to Telegram if anything needs attention
+```
+
+The agent reads this file, works through the items, and may proactively send notifications to connected channels.
+
+### Configuration
+
+Set the interval (in minutes) via environment variable:
+
+```bash
+HEARTBEAT_INTERVAL=30  # default: 30 minutes
+```
+
+If `HEARTBEAT.md` is empty or doesn't exist, the heartbeat is silently skipped — no LLM call is made.
+
+## Cron jobs
+
+For more precise scheduling, define cron jobs in `cron.json` inside the workspace:
+
+```json
+[
+  {
+    "name": "morning-briefing",
+    "schedule": "0 9 * * 1-5",
+    "timezone": "Europe/Paris",
+    "task": "Prepare a morning briefing with today's priorities from the task board and send it to the Telegram channel."
+  },
+  {
+    "name": "weekly-report",
+    "schedule": "0 18 * * 5",
+    "timezone": "Europe/Paris",
+    "task": "Generate a weekly summary of completed tasks and send it to Telegram."
+  }
+]
+```
+
+| Field | Required | Description |
+|---|---|---|
+| `name` | Yes | Unique job identifier |
+| `schedule` | Yes | Cron expression (5 fields) |
+| `timezone` | No | IANA timezone (default: `UTC`) |
+| `task` | Yes | Instruction sent to the agent |
+
+## Heartbeat vs cron
+
+| | Heartbeat | Cron |
+|---|---|---|
+| Trigger | Fixed interval | Time expression |
+| Context | Full workspace context | Full workspace context |
+| Session | New session per run | New session per run |
+| Usage billed | Yes | Yes |
+| Skip if empty | Yes | No (runs task string) |
+
+## Proactive notifications
+
+When a scheduled task completes, the agent can push messages to connected channels without waiting for a user message.
+
+The flow:
+1. Agent completes a scheduled run
+2. Agent calls a channel tool to send a message
+3. Channel delivers it to the user (Telegram, Discord, etc.)
+
+If no channel is connected when the notification is triggered, it is silently dropped.

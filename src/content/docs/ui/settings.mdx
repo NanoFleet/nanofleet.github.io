@@ -1,0 +1,47 @@
+---
+title: Settings
+description: Change credentials, reset 2FA, and manage API keys in NanoFleet.
+order: 3
+section: NanoFleet UI
+---
+
+# Settings
+
+Access Settings from the left sidebar (gear icon at the bottom).
+
+## Change username and password
+
+Under **Account**, you can update your display name and password. Password changes take effect immediately — you'll be asked to log in again.
+
+## Reset 2FA
+
+If you lose access to your authenticator app, reset 2FA via SSH:
+
+```bash
+bun apps/api/scripts/reset-2fa.ts
+```
+
+This clears the 2FA secret. On next startup, NanoFleet enters **Bootstrap Mode** again — a new QR code is displayed in the terminal for you to scan.
+
+> **Requires SSH access** to the server running NanoFleet.
+
+## API Keys
+
+Under **API Keys**, add and delete secrets used by agents and plugins:
+
+- `ANTHROPIC_API_KEY`
+- `GOOGLE_API_KEY`
+- `GITHUB_TOKEN`
+- Any custom key your agents or plugins need
+
+### Auto-injection
+
+When an agent pack lists keys in `requiredEnvVars`, NanoFleet automatically resolves them from the vault and injects them as environment variables at deploy time. You don't need to manually configure each agent.
+
+The same applies to plugins: if a plugin manifest lists `envVars`, those are resolved from the vault during installation.
+
+### Security
+
+- Keys are stored encrypted at rest using `ENCRYPTION_KEY` from your `.env`
+- Keys are injected at deploy time and never exposed through the API or UI after saving
+- To read a key value, use the nanofleet-vault plugin from an agent

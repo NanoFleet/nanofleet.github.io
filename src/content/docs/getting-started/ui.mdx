@@ -1,0 +1,77 @@
+---
+title: Installation (NanoFleet UI)
+description: Deploy and manage multiple agents with the NanoFleet web dashboard.
+order: 1
+section: Getting Started
+---
+
+# Installation (NanoFleet UI)
+
+Deploy and manage multiple AI agents with a full web dashboard — deploy agents, install plugins, and configure channels from a single interface.
+
+## Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose installed
+- Port `8080` available on your machine
+
+## Clone and configure
+
+```bash
+git clone https://github.com/NanoFleet/nanofleet.git
+cd nanofleet
+cp .env.example .env
+```
+
+Edit `.env` and fill in the three required secrets:
+
+```bash
+ENCRYPTION_KEY=<random 32-byte hex>
+ACCESS_TOKEN_SECRET=<random string>
+REFRESH_TOKEN_SECRET=<random string>
+```
+
+Generate them with:
+
+```bash
+openssl rand -hex 32
+```
+
+## Start the stack
+
+```bash
+docker compose up --build
+```
+
+The first build takes a few minutes. Once started, the API and dashboard are available at `http://localhost:8080`.
+
+## First login
+
+On first startup, NanoFleet runs in **Bootstrap Mode**:
+
+1. A **temporary password** is printed in the terminal output — copy it.
+2. A **QR code** is displayed — scan it with your authenticator app (Google Authenticator, Authy, etc.) to set up 2FA.
+3. Open `http://localhost:8080` in your browser and log in with the temporary password + 2FA code.
+4. You'll be prompted to set a permanent password.
+
+## Access the dashboard
+
+After login, you land on the Fleet Dashboard where you can:
+
+- Deploy and manage agents
+- Install plugins
+- Configure channels (Telegram, Discord, webhook)
+- Monitor live logs and token usage
+
+## Production with HTTPS
+
+For production deployments, NanoFleet includes a Traefik configuration with automatic TLS:
+
+```bash
+# Copy the production compose override
+cp docker-compose.prod.yml docker-compose.override.yml
+
+# Edit with your domain
+nano docker-compose.override.yml
+```
+
+Set `DOMAIN=yourdomain.com` and point your DNS to the server. Traefik will automatically obtain a Let's Encrypt certificate.

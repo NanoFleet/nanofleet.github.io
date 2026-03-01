@@ -62,9 +62,21 @@ const faqs = defineCollection({
   }),
 });
 
+// Docs collection
+const docs = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/docs' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    order: z.number().default(0),
+    section: z.string().optional(),
+  }),
+});
+
 export const collections = {
   blog,
   pages,
   authors,
   faqs,
+  docs,
 };

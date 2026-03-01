@@ -1,0 +1,50 @@
+---
+title: Managing Agents
+description: Deploy, start, stop, edit, and monitor agents from the NanoFleet dashboard.
+order: 2
+section: NanoFleet UI
+---
+
+# Managing Agents
+
+## Deploying an agent
+
+1. Click **Deploy New Agent** in the left sidebar
+2. Upload an agent pack (`.zip`) or choose a previously uploaded pack
+3. Set a name and model (overrides the pack's `manifest.json` defaults)
+4. Click **Deploy**
+
+The agent container is created and started. It appears on the Fleet Dashboard within a few seconds.
+
+## Start / Stop / Delete
+
+From the Fleet Dashboard, each agent card has quick action buttons:
+
+- **Start** — start a stopped agent
+- **Stop** — stop a running agent (workspace is preserved)
+- **Delete** — stop and remove the agent container. You'll be asked whether to also delete the workspace.
+
+## Live logs
+
+Click an agent card to open the workspace view. The **Logs** tab streams stdout/stderr from the container in real time via WebSocket. Useful for debugging tools calls and scheduled tasks.
+
+## Editing agent files
+
+In the workspace view, the **Files** tab shows the agent's workspace directory. You can:
+
+- Browse and open files
+- Edit files directly in the browser (code editor with syntax highlighting)
+- Upload new files
+- Delete files
+
+Key files editable from the UI:
+
+| File | Purpose |
+|---|---|
+| `SOUL.md` | Agent identity and personality |
+| `STYLE.md` | Communication style |
+| `MEMORY.md` | Long-term memory |
+| `HEARTBEAT.md` | Periodic task checklist |
+| `cron.json` | Scheduled jobs |
+
+Changes to `SOUL.md`, `STYLE.md`, and other identity files take effect on the next agent restart. Changes to `MEMORY.md`, `HEARTBEAT.md`, and `cron.json` are picked up without a restart.

@@ -1,0 +1,76 @@
+---
+title: Telegram
+description: Connect an agent to Telegram with a bot token.
+order: 2
+section: Channels
+---
+
+# Telegram Channel
+
+Connect a NanoFleet agent to Telegram using a Telegram bot. Users interact with the agent via direct messages to the bot.
+
+## Step 1 — Create a Telegram bot
+
+1. Open Telegram and message [@BotFather](https://t.me/botfather)
+2. Send `/newbot` and follow the prompts
+3. Copy the **bot token** (format: `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11`)
+
+## Via NanoFleet UI
+
+In the dashboard, go to **Channels → Deploy Channel → Telegram** and fill in:
+
+| Field | Description |
+|---|---|
+| Agent | The agent to connect |
+| Bot Token | Your Telegram bot token |
+| Allowed Users | Optional comma-separated Telegram user IDs (restricts access) |
+| Notification User ID | Optional Telegram user ID for proactive notifications |
+
+Click **Deploy**. The channel container starts automatically.
+
+## Via standalone Docker Compose
+
+Add the Telegram channel service to your `docker-compose.yml`:
+
+```yaml
+services:
+  agent:
+    image: ghcr.io/nanofleet/nanofleet-agent:latest
+    restart: unless-stopped
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      AGENT_MODEL: claude-sonnet-4-5
+    volumes:
+      - ./workspace:/app/workspace
+
+  telegram:
+    image: ghcr.io/nanofleet/nanofleet-channel-telegram:latest
+    restart: unless-stopped
+    environment:
+      AGENT_URL: http://agent:3000
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      ALLOWED_USERS: ${ALLOWED_USERS}
+      NOTIFICATION_USER_ID: ${NOTIFICATION_USER_ID}
+    depends_on:
+      - agent
+```
+
+### Environment variables
+
+| Variable | Required | Description |
+|---|---|---|
+| `AGENT_URL` | Yes | Internal URL of the agent container |
+| `TELEGRAM_BOT_TOKEN` | Yes | Bot token from @BotFather |
+| `ALLOWED_USERS` | No | Comma-separated Telegram user IDs allowed to send messages |
+| `NOTIFICATION_USER_ID` | No | Telegram user ID to receive proactive notifications |
+
+## Upgrade
+
+**Via dashboard**: Click **Upgrade** next to the channel in the Channels list.
+
+**Via Docker Compose**:
+
+```bash
+docker compose pull telegram
+docker compose up -d telegram
+```

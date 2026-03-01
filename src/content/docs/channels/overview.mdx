@@ -1,0 +1,49 @@
+---
+title: Overview
+description: How channels connect agents to messaging platforms and external interfaces.
+order: 1
+section: Channels
+---
+
+# Channels — Overview
+
+A **channel** is a separate adapter container that bridges a messaging platform (Telegram, Discord, webhook…) with a NanoFleet agent. Channels are decoupled from the agent core — you can add or remove them without touching the agent.
+
+## Architecture
+
+```
+User → Telegram → Channel container → POST /api/agents/:id/stream → Agent
+                                    ←─────────── SSE stream ─────────────
+```
+
+Each channel:
+
+1. **Receives** a message from the platform (webhook, polling, etc.)
+2. **Normalizes** it to NanoFleet's message format
+3. **Streams** it to the agent via `POST /api/agents/:id/stream`
+4. **Relays** the agent's streamed response back to the user
+
+## Available channels
+
+| Channel | Image |
+|---|---|
+| Telegram | `ghcr.io/nanofleet/nanofleet-channel-telegram:latest` |
+| Discord | `ghcr.io/nanofleet/nanofleet-channel-discord:latest` |
+| Webhook | `ghcr.io/nanofleet/nanofleet-channel-webhook:latest` |
+| CLI | Built into the agent (`/cli` endpoint) |
+
+## Multimodal support
+
+Channels handle media before forwarding to the agent:
+
+- **Voice messages** → transcribed with Whisper (via Groq or OpenAI) → text sent to agent
+- **Images** → forwarded as base64 if the model supports vision
+- **Text-to-speech** → agent responses can be converted to voice in the channel
+
+Enable TTS by setting `TTS_ENABLED=true` and `TTS_PROVIDER=groq` (or `openai`) in the channel environment.
+
+## Proactive notifications
+
+Agents can push messages to users without waiting for input. The agent sends a notification via the channel's outbound API — the channel delivers it to the platform.
+
+If no channel is connected, proactive notifications are silently dropped.

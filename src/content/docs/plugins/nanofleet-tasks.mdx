@@ -1,0 +1,76 @@
+---
+title: nanofleet-tasks
+description: Kanban task manager plugin — assign tasks to agents and track progress.
+order: 4
+section: Plugins
+---
+
+# nanofleet-tasks
+
+A Kanban task manager built for NanoFleet agents. Create tasks from the dashboard and assign them to agents — agents pick them up, work through them, and post results.
+
+## Install
+
+In the NanoFleet dashboard, go to **Plugins → Install Plugin** and enter:
+
+```
+https://raw.githubusercontent.com/NanoFleet/nanofleet-tasks/main/manifest.json
+```
+
+After installation, a **Tasks** entry appears in the sidebar with a full Kanban board UI.
+
+## MCP tools
+
+Agents access these tools automatically once the plugin is installed:
+
+### `list_my_tasks`
+
+Returns all tasks assigned to the calling agent, sorted by status.
+
+```
+list_my_tasks() → Task[]
+```
+
+### `get_task`
+
+Returns the full details of a single task by ID.
+
+```
+get_task(id: string) → Task
+```
+
+### `update_task_status`
+
+Updates the status of a task.
+
+```
+update_task_status(id: string, status: "todo" | "in_progress" | "done") → Task
+```
+
+### `post_task_result`
+
+Posts a result message to a task and marks it as done. This is the **only** way to close a task.
+
+```
+post_task_result(id: string, result: string) → Task
+```
+
+## Agent workflow rules
+
+For agents to work correctly with nanofleet-tasks, follow these conventions:
+
+1. **Always call `update_task_status` with `in_progress` first** before starting work on a task.
+2. **Call `post_task_result` when done** — this both posts the result and closes the task. Do not call `update_task_status("done")` directly.
+3. Work on **one task at a time** — mark in_progress before fetching the next.
+
+## File output
+
+nanofleet-tasks mounts a `/shared` volume. When agents produce files as task results, write them to `/shared` so they are accessible from the host and other containers.
+
+```bash
+# In your docker-compose.yml
+services:
+  nanofleet-tasks:
+    volumes:
+      - ./shared:/shared
+```

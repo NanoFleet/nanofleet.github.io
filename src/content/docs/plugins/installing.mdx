@@ -1,0 +1,48 @@
+---
+title: Installing a Plugin
+description: Install, upgrade, and uninstall plugins from the NanoFleet dashboard.
+order: 2
+section: Plugins
+---
+
+# Installing a Plugin
+
+Plugins are installed from a manifest URL. The NanoFleet API pulls the manifest, starts the container, and links the plugin to all agents automatically.
+
+## Install from the dashboard
+
+1. Go to **Plugins** in the left sidebar
+2. Click **Install Plugin**
+3. Enter the manifest URL (e.g. `https://raw.githubusercontent.com/NanoFleet/nanofleet-tasks/main/manifest.json`)
+4. Click **Install**
+
+## What happens behind the scenes
+
+When you install a plugin, NanoFleet:
+
+1. **Fetches the manifest** from the URL
+2. **Pulls the Docker image** declared in `manifest.image`
+3. **Starts the container** on `nanofleet-net` with required env vars
+4. **Probes the MCP endpoint** (`GET /mcp`) — waits until healthy
+5. **Registers the plugin** in the database
+6. **Auto-links** the plugin to all running agents
+7. **Restarts agents** so they pick up the new `.mcp.json`
+
+## Upgrade a plugin
+
+From **Plugins** in the dashboard, click the **Upgrade** button next to a plugin. This:
+
+1. Pulls the latest Docker image
+2. Stops and removes the old container
+3. Creates a new container with the same configuration
+4. Restarts linked agents
+
+## Uninstall a plugin
+
+Click **Uninstall** in the plugin settings. This:
+
+1. Stops and removes the container
+2. Deletes the plugin record and all agent links
+3. Restarts linked agents (they rebuild `.mcp.json` without the plugin)
+
+> **Warning:** Uninstalling a plugin may delete its data if it stores data inside the container. Plugins that use a mounted volume (like nanofleet-tasks) preserve data across reinstalls.

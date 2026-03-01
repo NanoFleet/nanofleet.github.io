@@ -1,0 +1,133 @@
+---
+title: Agent Packs
+description: Bundle an agent's identity, memory, skills, and schedule into a deployable zip.
+order: 2
+section: Agents
+---
+
+# Agent Packs
+
+An **agent pack** is a zip file containing everything that defines an agent's personality, knowledge, and behavior. Upload it from the dashboard to deploy a fully configured agent in one click.
+
+## Pack structure
+
+```
+my-agent-pack/
+├── manifest.json   # Required — agent metadata
+├── SOUL.md         # Required — agent identity and personality
+├── STYLE.md        # Optional — communication style guidelines
+├── AGENTS.md       # Optional — multi-agent collaboration context
+├── MEMORY.md       # Optional — persistent long-term memory
+├── cron.json       # Optional — scheduled tasks
+└── skills/
+    └── MY_SKILL.md # Optional — loadable skill definitions
+```
+
+## manifest.json
+
+The manifest defines the agent's name, model, and required environment variables:
+
+```json
+{
+  "name": "my-agent",
+  "model": "claude-sonnet-4-5",
+  "requiredEnvVars": [
+    "ANTHROPIC_API_KEY",
+    "GITHUB_TOKEN"
+  ]
+}
+```
+
+| Field | Required | Description |
+|---|---|---|
+| `name` | Yes | Agent display name |
+| `model` | Yes | Default model ID |
+| `requiredEnvVars` | No | List of env vars to resolve from the vault at deploy time |
+
+## Identity files
+
+### SOUL.md
+
+Defines the agent's core identity — who it is, what it does, its values and limitations. This is the most important file in the pack.
+
+```markdown
+You are Aria, a senior software engineer...
+```
+
+### STYLE.md
+
+Communication style guidelines — tone, formatting preferences, response length, language.
+
+### AGENTS.md
+
+Multi-agent context — describes other agents in the fleet and how to collaborate with them (delegate tasks, share results).
+
+## Memory files
+
+### MEMORY.md
+
+Persistent long-term memory. The agent can read and write this file to remember facts across sessions. Updated via the `writeFile` tool.
+
+### HISTORY.md
+
+Session history context. Not part of the pack — generated automatically by the agent runtime.
+
+## Scheduling
+
+### cron.json
+
+Define scheduled tasks using cron expressions:
+
+```json
+[
+  {
+    "name": "morning-briefing",
+    "schedule": "0 9 * * 1-5",
+    "timezone": "Europe/Paris",
+    "task": "Prepare a morning briefing with today's priorities from the task board."
+  }
+]
+```
+
+See [Scheduling](/docs/agents/scheduling) for details.
+
+## Skills
+
+Skills are modular capabilities loaded dynamically. Each skill is a markdown file with YAML frontmatter:
+
+```markdown
+---
+name: code-review
+description: Review code for bugs, security issues, and style
+tools:
+  - readFile
+  - webSearch
+---
+
+When reviewing code, focus on...
+```
+
+Place skill files in `skills/` within the pack. The agent loads them on startup and makes them available as named capabilities.
+
+## How the system prompt is assembled
+
+NanoFleet assembles the agent's system prompt in a fixed order to maximize [prompt caching](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching):
+
+1. `SOUL.md` (static identity — cached)
+2. `STYLE.md` (static style — cached)
+3. `AGENTS.md` (static multi-agent context — cached)
+4. Skills (static — cached)
+5. `MEMORY.md` (can change — not cached)
+6. Tool descriptions (dynamic)
+
+Static sections go first so they hit the cache on every call.
+
+## Uploading from the dashboard
+
+1. Zip your pack directory: `zip -r my-agent.zip my-agent-pack/`
+2. In the dashboard, click **Deploy New Agent**
+3. Upload the zip file
+4. Set the agent name and model (overrides manifest defaults)
+5. Click **Deploy**
+
+Required env vars listed in `requiredEnvVars` are automatically resolved from the vault at deploy time.

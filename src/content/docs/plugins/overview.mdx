@@ -1,0 +1,74 @@
+---
+title: Overview
+description: How plugins extend agents with new tools via isolated Docker containers.
+order: 1
+section: Plugins
+---
+
+# Plugins — Overview
+
+A NanoFleet **plugin** is an isolated Docker container that exposes an [MCP (Model Context Protocol)](https://modelcontextprotocol.io) HTTP server. Agents connect to plugins to access new tools — file storage, databases, external APIs, Kanban boards, and more.
+
+## What is a plugin?
+
+```
+┌─────────────┐       MCP/HTTP       ┌─────────────────┐
+│    Agent    │ ──────────────────▶  │     Plugin      │
+│  container  │                      │  (MCP server)   │
+└─────────────┘                      └────────┬────────┘
+                                              │ (optional)
+                                    ┌─────────▼────────┐
+                                    │  External service │
+                                    │  (DB, API, etc.)  │
+                                    └──────────────────┘
+```
+
+Plugins run in the same Docker network (`nanofleet-net`) as agents. Agents call plugin tools directly over HTTP — the NanoFleet API is not on the hot path.
+
+## Network topology
+
+All containers share the `nanofleet-net` Docker network. Agents discover plugin MCP endpoints from a `.mcp.json` file generated at startup:
+
+```json
+{
+  "mcpServers": {
+    "nanofleet-tasks": {
+      "url": "http://nanofleet-tasks:8080/mcp"
+    },
+    "nanofleet-vault": {
+      "url": "http://nanofleet-vault:8080/mcp"
+    }
+  }
+}
+```
+
+This file is regenerated every time an agent starts, reflecting the currently installed and running plugins.
+
+## Agent ↔ Plugin relationship
+
+Plugins are **many-to-many** with agents. When you install a plugin, it is automatically linked to all existing agents. When you deploy a new agent, all installed plugins are automatically linked to it.
+
+You can manage individual links from the plugin settings in the dashboard.
+
+## Sidebar slots
+
+A plugin can inject a navigation entry and a full-page iframe into the NanoFleet dashboard. This is how nanofleet-tasks shows its Kanban board directly in the UI.
+
+Sidebar slot configuration is declared in the plugin manifest:
+
+```json
+{
+  "ui": {
+    "label": "Tasks",
+    "icon": "kanban",
+    "uiPort": 3001
+  }
+}
+```
+
+## Security
+
+- Each plugin runs in its own container — full isolation from other plugins and the host.
+- Plugins receive an `NANO_INTERNAL_TOKEN` at startup for authenticating callbacks to the NanoFleet API.
+- Network access is restricted to `nanofleet-net` — plugins cannot reach the internet unless explicitly configured.
+- The `agent_id` is passed with each tool call so plugins can scope data per agent.

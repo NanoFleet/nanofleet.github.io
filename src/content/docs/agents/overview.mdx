@@ -1,0 +1,85 @@
+---
+title: Overview
+description: What agents are, how they work, and their lifecycle in NanoFleet.
+order: 1
+section: Agents
+---
+
+# Agents — Overview
+
+A NanoFleet agent is a Docker container running a **Bun/TypeScript** runtime built on the [Mastra](https://mastra.ai) framework. Each agent has its own identity, memory, and tool access — and connects to the outside world through channels.
+
+## Architecture
+
+```
+┌─────────────────────────────────────┐
+│             NanoFleet Agent          │
+│                                     │
+│  ┌─────────┐   ┌──────────────────┐ │
+│  │ Identity │   │   LLM loop       │ │
+│  │ SOUL.md  │──▶│  (Mastra/Vercel │ │
+│  │ STYLE.md │   │   AI SDK)        │ │
+│  │AGENTS.md │   └────────┬─────────┘ │
+│  └─────────┘            │           │
+│                    ┌────▼────┐      │
+│  ┌──────────┐      │  Tools  │      │
+│  │  Memory  │      │ native  │      │
+│  │ MEMORY.md│      │ + MCP   │      │
+│  │HISTORY.md│      └─────────┘      │
+│  └──────────┘                       │
+│                                     │
+│  Transport: HTTP (SSE streaming)    │
+└─────────────────────────────────────┘
+```
+
+## Native tools
+
+Every agent has access to these tools by default:
+
+| Tool | Description |
+|---|---|
+| `webSearch` | Search the web |
+| `webFetch` | Fetch a URL and extract content |
+| `readFile` | Read a file from the workspace |
+| `writeFile` | Write a file to the workspace |
+| `editFile` | Edit a file with string replacement |
+| `listDir` | List files in a directory |
+| `execShell` | Execute a shell command (disabled by default) |
+
+> **Note:** `execShell` is disabled by default for security. Enable it by setting `ALLOW_SHELL_EXEC=true` in the agent's environment.
+
+## Supported models
+
+NanoFleet agents support 600+ models via Mastra's provider adapters:
+
+- **Anthropic**: Claude Sonnet, Claude Haiku, Claude Opus
+- **Google**: Gemini 2.0 Flash, Gemini 2.5 Pro
+- **OpenRouter**: Access to 200+ models with a single API key
+- **vLLM**: Self-hosted models via OpenAI-compatible API
+
+Set the model with the `AGENT_MODEL` environment variable (e.g. `claude-sonnet-4-5`, `gemini-2.0-flash`).
+
+## Agent lifecycle
+
+Agents in NanoFleet have four lifecycle states:
+
+| State | Description |
+|---|---|
+| `running` | Container is active and accepting requests |
+| `stopped` | Container is stopped, workspace preserved |
+| `error` | Container exited with an error |
+| `deploying` | Container is being created |
+
+From the dashboard or API:
+
+- **Deploy** — pull image, create container, start
+- **Stop** — stop container (workspace preserved)
+- **Resume** — restart a stopped container
+- **Delete** — stop + remove container + optionally remove workspace
+- **Upgrade** — pull latest image, recreate container, preserve workspace
+
+## Usage and cost tracking
+
+Each agent tracks token usage and estimated cost per LLM call. Totals are shown on the Fleet Dashboard card for each agent and in the agent workspace view.
+
+Cost is calculated using per-model pricing at the time of the call. Supported for all Anthropic and Google models; OpenRouter models use the reported usage from the API response.

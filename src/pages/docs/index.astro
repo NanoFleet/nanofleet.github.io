@@ -1,19 +1,64 @@
 ---
-import PageLayout from '@/layouts/PageLayout.astro';
+import DocsLayout from '@/layouts/DocsLayout.astro';
+import Icon from '@/components/ui/primitives/Icon/Icon.astro';
 ---
 
-<PageLayout
-  title="Docs — NanoFleet"
+<DocsLayout
+  title="NanoFleet Docs"
   description="Documentation for NanoFleet — self-hosted AI fleet manager."
 >
-  <section class="py-16 md:py-24">
-    <div class="container mx-auto px-6">
-      <div class="mb-10">
-        <h1 class="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl mb-3">Docs</h1>
-        <p class="text-sm text-foreground-muted max-w-lg">
-          Documentation for NanoFleet.
-        </p>
+  <h1>Documentation</h1>
+  <p class="text-foreground-muted text-base mb-8">
+    Get started with NanoFleet — choose your setup path.
+  </p>
+
+  <div class="grid gap-4 sm:grid-cols-2 not-prose">
+    <a
+      href="/docs/getting-started/ui"
+      class="group flex flex-col gap-3 rounded-xl border border-border bg-card p-5 transition-all hover:border-border-strong hover:shadow-sm"
+    >
+      <div class="flex items-center gap-3">
+        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-foreground-muted group-hover:text-foreground transition-colors">
+          <Icon name="layout" size="sm" />
+        </div>
+        <span class="font-semibold text-foreground text-sm">NanoFleet UI</span>
       </div>
-    </div>
-  </section>
-</PageLayout>
+      <p class="text-sm text-foreground-muted leading-relaxed">
+        Full fleet manager with web dashboard. Deploy and manage multiple agents, install plugins, and configure channels from a single interface.
+      </p>
+      <div class="flex items-center gap-1 text-xs text-foreground-subtle mt-auto pt-1">
+        <span>Get started</span>
+        <Icon name="arrow-right" size="xs" />
+      </div>
+    </a>
+
+    <a
+      href="/docs/getting-started/standalone"
+      class="group flex flex-col gap-3 rounded-xl border border-border bg-card p-5 transition-all hover:border-border-strong hover:shadow-sm"
+    >
+      <div class="flex items-center gap-3">
+        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-secondary text-foreground-muted group-hover:text-foreground transition-colors">
+          <Icon name="terminal" size="sm" />
+        </div>
+        <span class="font-semibold text-foreground text-sm">Standalone agent</span>
+      </div>
+      <p class="text-sm text-foreground-muted leading-relaxed">
+        Run a single agent with Docker. No dashboard, minimal setup, full control. Ideal for simple deployments.
+      </p>
+      <div class="flex items-center gap-1 text-xs text-foreground-subtle mt-auto pt-1">
+        <span>Get started</span>
+        <Icon name="arrow-right" size="xs" />
+      </div>
+    </a>
+  </div>
+
+  <h2>What's in the docs</h2>
+  <ul>
+    <li><a href="/docs/agents/overview"><strong>Agents</strong></a> — Architecture, native tools, supported models, lifecycle, and cost tracking.</li>
+    <li><a href="/docs/agents/packs"><strong>Agent Packs</strong></a> — Bundle identity, memory, and skills into a deployable zip.</li>
+    <li><a href="/docs/agents/scheduling"><strong>Scheduling</strong></a> — Heartbeat intervals and cron jobs for periodic tasks.</li>
+    <li><a href="/docs/plugins/overview"><strong>Plugins</strong></a> — Extend agents with isolated Docker containers running MCP servers.</li>
+    <li><a href="/docs/channels/overview"><strong>Channels</strong></a> — Connect agents to Telegram, Discord, webhooks, and more.</li>
+    <li><a href="/docs/ui/overview"><strong>NanoFleet UI</strong></a> — Fleet dashboard, agent workspace, and settings.</li>
+  </ul>
+</DocsLayout>
