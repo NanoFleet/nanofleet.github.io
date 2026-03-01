@@ -52,6 +52,6 @@ Agents using nanofleet-vault must follow these rules:
 2. **Only call `get_secret` when the secret is needed** — do not pre-fetch secrets speculatively.
 3. **Use secrets immediately** — do not store them in MEMORY.md or any file.
 
-## Auto-injection at deploy time
+## API Keys and requiredEnvVars
 
-Secrets listed in an agent pack's `requiredEnvVars` are automatically resolved from the vault and injected as environment variables when the agent is deployed — no manual configuration needed.
+Secrets listed in an agent pack's `requiredEnvVars` are validated against the API Keys stored in **Settings → API Keys** at deploy time. If a required key is missing, deployment fails with an error asking you to configure it first.
