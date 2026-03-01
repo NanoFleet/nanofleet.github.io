@@ -7,7 +7,7 @@ section: Agents
 
 # Scheduling
 
-NanoFleet agents support two types of scheduled execution: **heartbeat** (periodic check-in) and **cron jobs** (time-based tasks).
+NanoFleet agents support two types of scheduled execution: **heartbeat** (periodic check-in) and **cron jobs** (time-based tasks — not yet implemented).
 
 ## Heartbeat
 
@@ -28,31 +28,27 @@ The agent reads this file, works through the items, and may proactively send not
 
 ### Configuration
 
-Set the interval (in minutes) via environment variable:
+Set the interval (in seconds) via environment variable:
 
 ```bash
-HEARTBEAT_INTERVAL=30  # default: 30 minutes
+HEARTBEAT_INTERVAL=1800  # default: 1800 seconds (30 minutes)
 ```
 
 If `HEARTBEAT.md` is empty or doesn't exist, the heartbeat is silently skipped — no LLM call is made.
 
 ## Cron jobs
 
-For more precise scheduling, define cron jobs in `cron.json` inside the workspace:
+> **Not yet implemented.** Cron job scheduling is planned for a future release. Use `HEARTBEAT.md` for periodic tasks in the meantime.
+
+When implemented, cron jobs will be declared in `cron.json` in the workspace:
 
 ```json
 [
   {
     "name": "morning-briefing",
-    "schedule": "0 9 * * 1-5",
+    "cron": "0 9 * * 1-5",
     "timezone": "Europe/Paris",
     "task": "Prepare a morning briefing with today's priorities from the task board and send it to the Telegram channel."
-  },
-  {
-    "name": "weekly-report",
-    "schedule": "0 18 * * 5",
-    "timezone": "Europe/Paris",
-    "task": "Generate a weekly summary of completed tasks and send it to Telegram."
   }
 ]
 ```
@@ -60,7 +56,7 @@ For more precise scheduling, define cron jobs in `cron.json` inside the workspac
 | Field | Required | Description |
 |---|---|---|
 | `name` | Yes | Unique job identifier |
-| `schedule` | Yes | Cron expression (5 fields) |
+| `cron` | Yes | Cron expression (5 fields) |
 | `timezone` | No | IANA timezone (default: `UTC`) |
 | `task` | Yes | Instruction sent to the agent |
 
@@ -69,9 +65,7 @@ For more precise scheduling, define cron jobs in `cron.json` inside the workspac
 | | Heartbeat | Cron |
 |---|---|---|
 | Trigger | Fixed interval | Time expression |
-| Context | Full workspace context | Full workspace context |
-| Session | New session per run | New session per run |
-| Usage billed | Yes | Yes |
+| Status | **Available** | Not yet implemented |
 | Skip if empty | Yes | No (runs task string) |
 
 ## Proactive notifications

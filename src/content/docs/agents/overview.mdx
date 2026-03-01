@@ -46,18 +46,18 @@ Every agent has access to these tools by default:
 | `listDir` | List files in a directory |
 | `execShell` | Execute a shell command (disabled by default) |
 
-> **Note:** `execShell` is disabled by default for security. Enable it by setting `ALLOW_SHELL_EXEC=true` in the agent's environment.
+> **Note:** `execShell` is disabled by default for security. Enable it by setting `SHELL_TOOL_ENABLED=true` in the agent's environment.
 
 ## Supported models
 
 NanoFleet agents support 600+ models via Mastra's provider adapters:
 
-- **Anthropic**: Claude Sonnet, Claude Haiku, Claude Opus
-- **Google**: Gemini 2.0 Flash, Gemini 2.5 Pro
-- **OpenRouter**: Access to 200+ models with a single API key
+- **Anthropic**: `claude-sonnet-4-6`, `claude-haiku-4-5`, `claude-opus-4-6` — requires `ANTHROPIC_API_KEY`
+- **Google**: `gemini-2.0-flash`, `gemini-2.5-pro` — requires `GOOGLE_GENERATIVE_AI_API_KEY`
+- **OpenRouter**: 600+ models (Llama, Qwen, Mistral, DeepSeek…) — requires `OPENROUTER_API_KEY`. Prefix the model ID with `openrouter/`: e.g. `openrouter/meta-llama/llama-3.3-70b-instruct`
 - **vLLM**: Self-hosted models via OpenAI-compatible API
 
-Set the model with the `AGENT_MODEL` environment variable (e.g. `claude-sonnet-4-5`, `gemini-2.0-flash`).
+Set the model with the `AGENT_MODEL` environment variable.
 
 ## Agent lifecycle
 

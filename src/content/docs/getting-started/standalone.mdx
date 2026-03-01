@@ -9,57 +9,27 @@ section: Getting Started
 
 Run a single NanoFleet agent with Docker — no dashboard needed. Ideal for simple setups or testing.
 
-## Quick start with Docker
+## Docker Compose
 
-```bash
-docker run -d \
-  --name my-agent \
-  -e ANTHROPIC_API_KEY=sk-ant-... \
-  -e AGENT_MODEL=claude-sonnet-4-5 \
-  -p 3000:3000 \
-  ghcr.io/nanofleet/nanofleet-agent:latest
-```
-
-The agent is now running and accepting requests at `http://localhost:3000`.
-
-## Docker Compose with persistent workspace and Telegram
-
-A more complete setup using `docker-compose.yml` with a persistent workspace and a Telegram channel:
+Create a `docker-compose.yml`:
 
 ```yaml
 services:
   agent:
     image: ghcr.io/nanofleet/nanofleet-agent:latest
     restart: unless-stopped
-    environment:
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      AGENT_MODEL: claude-sonnet-4-5
-      PORT: 3000
-      HEARTBEAT_INTERVAL: 30
+    env_file: .env
     volumes:
-      - ./workspace:/app/workspace
+      - ./workspace:/workspace
     ports:
-      - "3000:3000"
-
-  telegram:
-    image: ghcr.io/nanofleet/nanofleet-channel-telegram:latest
-    restart: unless-stopped
-    environment:
-      AGENT_URL: http://agent:3000
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-      ALLOWED_USERS: ${ALLOWED_USERS}          # optional, comma-separated user IDs
-      NOTIFICATION_USER_ID: ${NOTIFICATION_USER_ID}  # optional, for proactive messages
-    depends_on:
-      - agent
+      - "4111:4111"
 ```
 
 Create a `.env` file alongside it:
 
 ```bash
 ANTHROPIC_API_KEY=sk-ant-...
-TELEGRAM_BOT_TOKEN=123456:ABC-...
-ALLOWED_USERS=123456789
-NOTIFICATION_USER_ID=123456789
+AGENT_MODEL=claude-sonnet-4-6
 ```
 
 Start with:
@@ -68,38 +38,48 @@ Start with:
 docker compose up -d
 ```
 
-## Environment variables
+The agent is now running at `http://localhost:4111`.
 
-| Variable | Required | Description |
-|---|---|---|
-| `ANTHROPIC_API_KEY` | Yes* | Anthropic API key |
-| `GOOGLE_API_KEY` | Yes* | Google Gemini API key |
-| `OPENROUTER_API_KEY` | Yes* | OpenRouter API key |
-| `AGENT_MODEL` | Yes | Model ID (e.g. `claude-sonnet-4-5`) |
-| `PORT` | No | HTTP port (default: `3000`) |
-| `HEARTBEAT_INTERVAL` | No | Heartbeat interval in minutes (default: `30`) |
+## With a Telegram channel
 
-*One LLM provider key is required depending on the model you use.
+Add the Telegram channel service to `docker-compose.yml`:
+
+```yaml
+services:
+  agent:
+    image: ghcr.io/nanofleet/nanofleet-agent:latest
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./workspace:/workspace
+
+  telegram:
+    image: ghcr.io/nanofleet/nanofleet-channel-telegram:latest
+    restart: unless-stopped
+    environment:
+      AGENT_URL: http://agent:4111
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      ALLOWED_USERS: ${ALLOWED_USERS}
+      NOTIFICATION_USER_ID: ${NOTIFICATION_USER_ID}
+    depends_on:
+      - agent
+```
+
+And add the Telegram variables to `.env`:
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-...
+AGENT_MODEL=claude-sonnet-4-6
+TELEGRAM_BOT_TOKEN=123456:ABC-...
+ALLOWED_USERS=123456789        # optional — restrict access to these user IDs
+NOTIFICATION_USER_ID=123456789 # optional — receive proactive notifications
+```
 
 ## Upgrade
-
-Pull the latest image and recreate the container:
 
 ```bash
 docker compose pull
 docker compose up -d
-```
-
-Or with plain Docker:
-
-```bash
-docker pull ghcr.io/nanofleet/nanofleet-agent:latest
-docker stop my-agent && docker rm my-agent
-docker run -d --name my-agent \
-  -e ANTHROPIC_API_KEY=sk-ant-... \
-  -e AGENT_MODEL=claude-sonnet-4-5 \
-  -p 3000:3000 \
-  ghcr.io/nanofleet/nanofleet-agent:latest
 ```
 
 Your workspace data is preserved because it lives in the `./workspace` volume mount.
