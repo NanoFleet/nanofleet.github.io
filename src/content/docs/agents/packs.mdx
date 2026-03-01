@@ -43,7 +43,7 @@ The manifest defines the agent's name, model, and required environment variables
 |---|---|---|
 | `name` | Yes | Agent display name |
 | `model` | Yes | Default model ID |
-| `requiredEnvVars` | No | List of env vars to resolve from the vault at deploy time |
+| `requiredEnvVars` | No | List of env vars that must exist in Settings → API Keys at deploy time |
 
 ## Identity files
 
@@ -120,4 +120,4 @@ Static sections go first so they hit the cache on every call. Tool definitions a
 4. Set the agent name and model (overrides manifest defaults)
 5. Click **Deploy**
 
-Required env vars listed in `requiredEnvVars` are automatically resolved from the vault at deploy time.
+Env vars listed in `requiredEnvVars` are validated against **Settings → API Keys** at deploy time — if any are missing, deployment fails with an error.
