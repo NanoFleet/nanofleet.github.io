@@ -17,10 +17,10 @@ A NanoFleet **plugin** is an isolated Docker container that exposes an [MCP (Mod
 │  container  │                      │  (MCP server)   │
 └─────────────┘                      └────────┬────────┘
                                               │ (optional)
-                                    ┌─────────▼────────┐
+                                    ┌─────────▼─────────┐
                                     │  External service │
                                     │  (DB, API, etc.)  │
-                                    └──────────────────┘
+                                    └───────────────────┘
 ```
 
 Plugins run in the same Docker network (`nanofleet-net`) as agents. Agents call plugin tools directly over HTTP — the NanoFleet API is not on the hot path.
@@ -47,8 +47,6 @@ This file is regenerated every time an agent starts, reflecting the currently in
 ## Agent ↔ Plugin relationship
 
 Plugins are **many-to-many** with agents. When you install a plugin, it is automatically linked to all existing agents. When you deploy a new agent, all installed plugins are automatically linked to it.
-
-You can manage individual links from the plugin settings in the dashboard.
 
 ## Sidebar slots
 
