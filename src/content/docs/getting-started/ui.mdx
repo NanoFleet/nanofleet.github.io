@@ -73,7 +73,7 @@ By default, NanoFleet is accessible at `http://localhost:8080`. No additional co
 
 NanoFleet's `docker-compose.yml` includes Traefik under a `prod` profile that handles TLS automatically via Let's Encrypt.
 
-Add your domain and email to `apps/api/.env`:
+Create a `.env` at the project root with your domain and email (Docker Compose loads it automatically for variable substitution):
 
 ```bash
 DOMAIN=yourdomain.com
