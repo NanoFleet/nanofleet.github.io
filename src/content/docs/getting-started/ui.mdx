@@ -19,12 +19,13 @@ Deploy and manage multiple AI agents with a full web dashboard — deploy agents
 ```bash
 git clone https://github.com/NanoFleet/nanofleet.git
 cd nanofleet
-cp .env.example .env
+cp apps/api/.env.example apps/api/.env
 ```
 
-Edit `.env` and fill in the three required secrets:
+Edit `.env` and fill in the required secrets as well as the origins that will be used (localhost or your domain)
 
 ```bash
+ALLOWED_ORIGINS=http://localhost:5173,http://localhost:5174
 ENCRYPTION_KEY=<random 32-byte hex>
 ACCESS_TOKEN_SECRET=<random string>
 REFRESH_TOKEN_SECRET=<random string>
@@ -72,7 +73,7 @@ By default, NanoFleet is accessible at `http://localhost:8080`. No additional co
 
 NanoFleet's `docker-compose.yml` includes Traefik under a `prod` profile that handles TLS automatically via Let's Encrypt.
 
-Set your domain and email in `.env`:
+Create a `.env` at the project root with your domain and email (Docker Compose loads it automatically for variable substitution):
 
 ```bash
 DOMAIN=yourdomain.com

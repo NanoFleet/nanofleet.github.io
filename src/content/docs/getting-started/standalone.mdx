@@ -9,9 +9,9 @@ section: Getting Started
 
 Run a single NanoFleet agent with Docker — no dashboard needed. Ideal for simple setups or testing.
 
-## Docker Compose
+## With a Telegram channel (recommended)
 
-Create a `docker-compose.yml`:
+The agent has no built-in authentication. The safest setup keeps it off the public internet entirely — the Telegram channel is the only entry point, talking to the agent over an internal Docker network.
 
 ```yaml
 services:
@@ -21,8 +21,25 @@ services:
     env_file: .env
     volumes:
       - ./workspace:/workspace
-    ports:
-      - "4111:4111"
+    networks:
+      - agent-net
+    # No ports: — not exposed to the host
+
+  telegram:
+    image: ghcr.io/nanofleet/nanofleet-channel-telegram:latest
+    restart: unless-stopped
+    environment:
+      AGENT_URL: http://agent:4111
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      ALLOWED_USERS: ${ALLOWED_USERS}
+      NOTIFICATION_USER_ID: ${NOTIFICATION_USER_ID}
+    depends_on:
+      - agent
+    networks:
+      - agent-net
+
+networks:
+  agent-net:
 ```
 
 Copy the example env file and fill in the required values:
@@ -37,11 +54,9 @@ Start with:
 docker compose up -d
 ```
 
-The agent is now running at `http://localhost:4111`.
+## With the port exposed (dev / custom integrations)
 
-## With a Telegram channel
-
-Add the Telegram channel service to `docker-compose.yml`:
+If you need direct access to the agent's HTTP API — for development, webhooks, or custom integrations — expose the port:
 
 ```yaml
 services:
@@ -51,18 +66,14 @@ services:
     env_file: .env
     volumes:
       - ./workspace:/workspace
-
-  telegram:
-    image: ghcr.io/nanofleet/nanofleet-channel-telegram:latest
-    restart: unless-stopped
-    environment:
-      AGENT_URL: http://agent:4111
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-      ALLOWED_USERS: ${ALLOWED_USERS}
-      NOTIFICATION_USER_ID: ${NOTIFICATION_USER_ID}
-    depends_on:
-      - agent
+    ports:
+      - "4111:4111"
 ```
+
+> **Note:** The agent API has no authentication. Do not expose port 4111 to the internet without a reverse proxy or firewall rule restricting access.
+
+The agent is accessible at `http://localhost:4111`.
+
 ## Upgrade
 
 ```bash

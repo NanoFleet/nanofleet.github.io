@@ -1,0 +1,119 @@
+---
+title: Building a Channel
+description: Create a custom channel adapter to connect any platform to a NanoFleet agent.
+order: 3
+section: Channels
+---
+
+# Building a Channel
+
+A channel is a standalone Docker container that bridges a messaging platform with a NanoFleet agent. The agent has no knowledge of which platform is calling it — all it sees is normalized HTTP requests.
+
+## How it works
+
+```
+Platform → Channel container → POST /api/agents/:id/generate → Agent
+                             ←─────────── response ──────────────
+         ← Channel container ← GET  /api/agents/:id/notifications/stream (SSE)
+```
+
+The channel handles two directions:
+
+- **Inbound**: receive a message from the platform → call the agent → send the response back
+- **Outbound**: subscribe to the agent's notification stream → forward proactive messages to the platform
+
+## Agent API endpoints
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/api/agents/:id/generate` | Send a message, get a response (JSON) |
+| `POST` | `/api/agents/:id/stream` | Send a message, stream the response (SSE) |
+| `POST` | `/api/agents/:id/memory/threads` | Create a conversation thread |
+| `GET` | `/api/agents/:id/notifications/stream` | Subscribe to proactive notifications (SSE) |
+| `GET` | `/health` | Health check |
+
+## Session isolation
+
+Scope each user's conversation with a `threadId` and `resourceId`:
+
+```typescript
+// Request body
+{
+  messages: [{ role: 'user', content: 'Hello' }],
+  threadId: 'telegram:123456789',   // unique per user/channel
+  resourceId: 'telegram:123456789'
+}
+```
+
+Use a consistent naming convention like `{platform}:{userId}` to avoid context leakage between users.
+
+## Minimal implementation
+
+```typescript
+import EventSource from 'eventsource';
+import axios from 'axios';
+
+const AGENT_URL = process.env.AGENT_URL ?? 'http://agent:4111';
+const AGENT_ID  = process.env.AGENT_ID  ?? 'main';
+
+// Send a message to the agent and get a response
+async function ask(text: string, threadId: string): Promise<string> {
+  const res = await axios.post(`${AGENT_URL}/api/agents/${AGENT_ID}/generate`, {
+    messages: [{ role: 'user', content: text }],
+    threadId,
+    resourceId: threadId,
+  });
+  return res.data.text;
+}
+
+// Subscribe to proactive notifications
+function subscribeNotifications(onMessage: (text: string) => void) {
+  const es = new EventSource(
+    `${AGENT_URL}/api/agents/${AGENT_ID}/notifications/stream`
+  );
+  es.onmessage = (event) => {
+    const { text } = JSON.parse(event.data);
+    onMessage(text);
+  };
+  return () => es.close();
+}
+```
+
+## Proactive notifications
+
+The agent emits a notification when a heartbeat run produces actionable output. Subscribe at channel startup and stay connected — the SSE connection is long-lived:
+
+```typescript
+subscribeNotifications((text) => {
+  // forward to the platform (e.g. send a Telegram message to NOTIFICATION_USER_ID)
+  sendToUser(notificationUserId, text);
+});
+```
+
+If the connection drops, reconnect with exponential backoff.
+
+## Dockerfile
+
+```dockerfile
+FROM oven/bun:1-alpine
+WORKDIR /app
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
+COPY src ./src
+CMD ["bun", "src/index.ts"]
+```
+
+## Environment variables
+
+Expose at minimum:
+
+| Variable | Description |
+|---|---|
+| `AGENT_URL` | URL of the agent container (default: `http://agent:4111`) |
+| `AGENT_ID` | Agent ID to target (default: `main`) |
+
+Add platform-specific variables as needed (bot tokens, webhook secrets, etc.).
+
+## Reference implementation
+
+The [Telegram channel](https://github.com/NanoFleet/nanofleet-agent-channels/tree/main/telegram) is a complete reference implementation built with [Telegraf](https://telegraf.js.org/).
