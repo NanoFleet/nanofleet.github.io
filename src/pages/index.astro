@@ -103,6 +103,7 @@ import Icon from '@/components/ui/primitives/Icon/Icon.astro';
                 {[
                   { label: 'Vault', icon: 'key-round' },
                   { label: 'Tasks', icon: 'square-check-big' },
+                  { label: 'News', icon: 'book-open' },
                 ].map(item => (
                   <div class="flex items-center gap-2 rounded-md px-2 py-1.5 text-xs font-medium text-foreground-muted">
                     <Icon name={item.icon} size="sm" />
@@ -334,7 +335,7 @@ import Icon from '@/components/ui/primitives/Icon/Icon.astro';
           </p>
         </div>
 
-        <div class="mx-auto max-w-2xl grid gap-3 sm:grid-cols-2">
+        <div class="mx-auto max-w-3xl grid gap-3 sm:grid-cols-3">
           {[
             {
               icon: 'check-circle',
@@ -347,6 +348,12 @@ import Icon from '@/components/ui/primitives/Icon/Icon.astro';
               name: 'nanofleet-vault',
               description: 'Secret manager with per-agent access control.',
               href: 'https://github.com/NanoFleet/nanofleet-vault',
+            },
+            {
+              icon: 'book-open',
+              name: 'nanofleet-news',
+              description: 'Daily PDF newspaper from RSS feeds, delivered every morning.',
+              href: 'https://github.com/NanoFleet/nanofleet-news',
             },
           ].map(plugin => (
             <a
