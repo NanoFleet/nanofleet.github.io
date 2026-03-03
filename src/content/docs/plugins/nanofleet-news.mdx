@@ -1,0 +1,69 @@
+---
+title: nanofleet-news
+description: Daily PDF newspaper generated from RSS feeds and delivered every morning via your channel.
+order: 6
+section: Plugins
+---
+
+# nanofleet-news
+
+A daily news digest plugin for NanoFleet. Every morning it fetches articles from your configured RSS feeds, generates a PDF newspaper, and delivers it to your connected channel (e.g. Telegram).
+
+Categories without RSS feeds are filled in automatically by the agent via web search.
+
+## Install
+
+Go to **Plugins** in the dashboard. On the **Official** tab, click **Install** next to `nanofleet-news` — or on the **Installed** tab click **+ Install Plugin** and enter:
+
+```
+https://raw.githubusercontent.com/NanoFleet/nanofleet-news/main/manifest.json
+```
+
+After installation, a **News** entry appears in the sidebar.
+
+## Configuration
+
+Open the **News** plugin from the sidebar and go to the **Configuration** tab:
+
+| Field | Description |
+|-------|-------------|
+| **Agent** | The agent that will receive and deliver the digest |
+| **Schedule (cron)** | Standard 5-field cron expression (e.g. `0 7 * * *` = every day at 7:00 AM) |
+| **Timezone** | IANA timezone (e.g. `Europe/Paris`, `America/New_York`) |
+| **Enable scheduler** | Toggle to activate/deactivate automatic generation |
+
+## Sources
+
+Go to the **Sources** tab to manage categories and RSS feeds.
+
+- **Categories** group articles by topic in the PDF.
+- Each category has a configurable **max articles per feed** limit (default: 10).
+- **RSS feeds** are optional — if none are configured for a category, the agent performs a web search using the category name as the query.
+
+## History
+
+The **History** tab lists all previously generated digests. Click **View PDF** to open a digest directly in the browser.
+
+You can also trigger an immediate generation with the **Generate now** button at the top.
+
+## MCP tools
+
+Agents can interact with this plugin via two tools:
+
+### `generate_digest`
+
+Manually triggers the generation and delivery of the news digest.
+
+```
+generate_digest() → { ok: true, message: string }
+```
+
+Use this when the user asks to generate or send the journal now.
+
+### `list_digests`
+
+Lists previously generated digests.
+
+```
+list_digests() → { digests: { id, filename, generated_at }[] }
+```
