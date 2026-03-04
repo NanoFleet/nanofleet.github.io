@@ -32,6 +32,7 @@ The manifest defines the agent's name, model, and required environment variables
 ```json
 {
   "name": "my-agent",
+  "version": "1.0.0",
   "model": "claude-sonnet-4-5",
   "requiredEnvVars": [
     "ANTHROPIC_API_KEY",
@@ -43,6 +44,7 @@ The manifest defines the agent's name, model, and required environment variables
 | Field | Required | Description |
 |---|---|---|
 | `name` | Yes | Agent display name |
+| `version` | No | Version string for tracking (e.g. "1.0.0") |
 | `model` | Yes | Default model ID |
 | `requiredEnvVars` | No | List of env vars that must exist in Settings → API Keys at deploy time |
 
