@@ -55,6 +55,7 @@ NanoFleet agents support 600+ models via Mastra's provider adapters:
 - **Anthropic**: `claude-sonnet-4-6`, `claude-haiku-4-5`, `claude-opus-4-6` — requires `ANTHROPIC_API_KEY`
 - **Google**: `gemini-2.0-flash`, `gemini-2.5-pro` — requires `GOOGLE_GENERATIVE_AI_API_KEY`
 - **OpenRouter**: 600+ models (Llama, Qwen, Mistral, DeepSeek…) — requires `OPENROUTER_API_KEY`. Prefix the model ID with `openrouter/`: e.g. `openrouter/meta-llama/llama-3.3-70b-instruct`
+- **MiniMax**: `minimax-m2.5` — requires `MINIMAX_API_KEY`. Prefix the model ID with `minimax/`: e.g. `minimax/minimax-m2.5`
 - **vLLM**: Self-hosted models via OpenAI-compatible API
 
 Set the model with the `AGENT_MODEL` environment variable.
@@ -82,4 +83,4 @@ From the dashboard or API:
 
 Each agent tracks token usage and estimated cost per LLM call. Totals are shown on the Fleet Dashboard card for each agent and in the agent workspace view.
 
-Cost is calculated using per-model pricing at the time of the call. Supported for all Anthropic and Google models; OpenRouter models use the reported usage from the API response.
+Cost is calculated using per-model pricing at the time of the call. Supported for all Anthropic, Google, and MiniMax models; OpenRouter models use the reported usage from the API response.
